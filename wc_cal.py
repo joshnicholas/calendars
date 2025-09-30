@@ -46,8 +46,11 @@ X-WR-TIMEZONE:America/New_York
 """
 
     for day, prompt in prompts:
-        start_date = f"20251{day:02d}"
-        end_date = f"20251{day+1 if day < 31 else 101:03d}"
+        start_date = f"202510{day:02d}"
+        if day < 31:
+            end_date = f"202510{day+1:02d}"
+        else:
+            end_date = "20251101"
 
         ics_content += f"""BEGIN:VEVENT
 UID:wc-2025-10-{day:02d}@wordcalendar
