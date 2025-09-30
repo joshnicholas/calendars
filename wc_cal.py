@@ -45,7 +45,7 @@ def create_ics():
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
         "X-WR-CALNAME:Word Prompts October 2025",
-        "X-WR-TIMEZONE:America/New_York"
+        "X-WR-TIMEZONE:Australia/Melbourne"
     ]
 
     for day, prompt in prompts:
