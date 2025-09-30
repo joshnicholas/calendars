@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 prompts = [
     (1, "MUSTACHE"),
@@ -36,14 +36,17 @@ prompts = [
 ]
 
 def create_ics():
-    ics_content = """BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Word Calendar//EN
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-X-WR-CALNAME:Word Prompts October 2025
-X-WR-TIMEZONE:America/New_York
-"""
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+    lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Word Calendar//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:Word Prompts October 2025",
+        "X-WR-TIMEZONE:America/New_York"
+    ]
 
     for day, prompt in prompts:
         start_date = f"202510{day:02d}"
@@ -52,19 +55,23 @@ X-WR-TIMEZONE:America/New_York
         else:
             end_date = "20251101"
 
-        ics_content += f"""BEGIN:VEVENT
-UID:wc-2025-10-{day:02d}@wordcalendar
-DTSTART;VALUE=DATE:{start_date}
-DTEND;VALUE=DATE:{end_date}
-SUMMARY:{prompt}
-DESCRIPTION:Official Inktober prompts from https://inktober.com/rules
-TRANSP:TRANSPARENT
-END:VEVENT
-"""
+        lines.extend([
+            "BEGIN:VEVENT",
+            f"UID:wc-2025-10-{day:02d}@wordcalendar",
+            f"DTSTAMP:{timestamp}",
+            f"DTSTART;VALUE=DATE:{start_date}",
+            f"DTEND;VALUE=DATE:{end_date}",
+            f"SUMMARY:{prompt}",
+            "DESCRIPTION:Official Inktober prompts from https://inktober.com/rules",
+            "TRANSP:TRANSPARENT",
+            "END:VEVENT"
+        ])
 
-    ics_content += "END:VCALENDAR"
+    lines.append("END:VCALENDAR")
 
-    with open("out/cals/wc_cal.ics", "w") as f:
+    ics_content = "\r\n".join(lines) + "\r\n"
+
+    with open("out/cals/wc_cal.ics", "w", newline='') as f:
         f.write(ics_content)
 
     print("Calendar file created: wc_cal.ics")
