@@ -21,7 +21,7 @@ today = datetime.datetime.now()
 scrape_time = today.astimezone(pytz.timezone("Australia/Brisbane"))
 format_scrape_time = datetime.datetime.strftime(scrape_time, "%Y_%m")
 
-from country_named_entity_recognition import find_countries
+# from country_named_entity_recognition import find_countries
 
 # %%
 

@@ -21,10 +21,9 @@ today = datetime.datetime.now()
 scrape_time = today.astimezone(pytz.timezone("Australia/Brisbane"))
 format_scrape_time = datetime.datetime.strftime(scrape_time, "%Y_%m")
 
-from country_named_entity_recognition import find_countries
+# from country_named_entity_recognition import find_countries
 
 # %%
-
 
 def shot_grabber(urlo, out_path, javascript_code, awaito):
     tries = 0
@@ -72,49 +71,22 @@ def shot_grabber(urlo, out_path, javascript_code, awaito):
 
         except Exception as e:
             tries += 1
+            print(e)
             print("Tries: ", tries)
             browser.close()
 
 
-scraped = pd.read_json('inter/tennis/latest.json')
-# scraped = shot_grabber('https://www.atptour.com/en/tournaments',  'inter/tennis',
-#     """
-#     var contexto = document.querySelector('.tournament-list')
-#         Array.from(contexto.querySelectorAll('li'), el => {
-#         let nammo = el.querySelector('.name').innerText
-#         let venue = el.querySelector('.venue').innerText
-#         let date = el.querySelector('.Date').innerText
-#         return {nammo, venue, date};
-#         })""",
-#     '.tournament-list')
-
-# %%
-
-df = scraped.copy()
-
-df['Location'] = df['venue'].apply(lambda x: find_countries(x, is_ignore_case=True))
-
-
-print(df)
-
-# %%
-
-def get_timezone(stringo):
-
-    country = find_countries(stringo, is_ignore_case=True)[0][0].alpha_2
-    timezone = pytz.country_timezones[country][0]
-
-    #### Need to convert the 
-    # current_time = today.astimezone(pytz.timezone(timezone))
-
-    # print(scrape_time)
-    # print(current_time)
-
-    # print(country)
-    # print(timezone)
-# print(pytz.country_timezones[testo])
-
-
-get_timezone("Bologna, Spain |")
-
-# %%
+# scraped = pd.read_json('inter/tennis/latest.json')
+scraped = shot_grabber('https://www.espn.com.au/tennis/schedule',  'in/cricket',
+    """
+    var contexto = document.querySelector('.layout')
+        Array.from(contexto.querySelectorAll('.Table__TR'), el => {
+            if (el.querySelector('.AnchorLink') !== null)
+            {
+        let nammo = el.querySelector('.eventAndLocation__col').innerText
+        let date = el.querySelector('.dateRange__col').innerText
+        let linko = el.querySelector('.AnchorLink').href
+        return {nammo, date, linko};
+            }
+        })""",
+    '.layout')
